@@ -309,7 +309,7 @@
             <!-- Hero Feature Image -->
             <div class="hidden lg:flex justify-end relative animate-float interactive cursor-none">
                 <div class="hero-image-shell w-full max-w-md aspect-[4/5]">
-                    <img src="images/Lamine.webp" alt="Lamine featured jersey" loading="eager">
+                    <img id="featured-drop-image" src="images/Lamine.webp" alt="Lamine featured jersey" loading="eager">
                     <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 via-black/35 to-transparent">
                         <div class="flex items-center justify-between gap-4">
                             <div>
@@ -516,6 +516,38 @@
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
+        const featuredDropImage = document.getElementById('featured-drop-image');
+
+        if (featuredDropImage) {
+            const featuredImageOptions = [
+                { src: 'images/Lamine.webp', alt: 'Lamine featured jersey' },
+                { src: 'images/Gnabry.png', alt: 'Gnabry featured jersey' }
+            ];
+
+            const featuredImageStorageKey = 'featured-drop-last-index';
+            const savedFeaturedIndex = Number(sessionStorage.getItem(featuredImageStorageKey));
+            const hasSavedIndex = Number.isInteger(savedFeaturedIndex)
+                && savedFeaturedIndex >= 0
+                && savedFeaturedIndex < featuredImageOptions.length;
+
+            // Start random on first load, then rotate to avoid repeated picks across reloads.
+            const nextFeaturedIndex = hasSavedIndex
+                ? (savedFeaturedIndex + 1) % featuredImageOptions.length
+                : Math.floor(Math.random() * featuredImageOptions.length);
+            const nextFeaturedImage = featuredImageOptions[nextFeaturedIndex];
+
+            featuredDropImage.src = nextFeaturedImage.src;
+            featuredDropImage.alt = nextFeaturedImage.alt;
+            sessionStorage.setItem(featuredImageStorageKey, String(nextFeaturedIndex));
+
+            featuredDropImage.onerror = () => {
+                const fallbackIndex = (nextFeaturedIndex + 1) % featuredImageOptions.length;
+                const fallbackImage = featuredImageOptions[fallbackIndex];
+                featuredDropImage.src = fallbackImage.src;
+                featuredDropImage.alt = fallbackImage.alt;
+                sessionStorage.setItem(featuredImageStorageKey, String(fallbackIndex));
+            };
+        }
 
         window.addEventListener('mousemove', (e) => {
             const posX = e.clientX;
