@@ -22,9 +22,14 @@ const quickBuyCloseDesktop = document.getElementById('quick-buy-close-desktop');
 const quickBuyCloseMobile = document.getElementById('quick-buy-close-mobile');
 const quickBuySizeButtonsDesktop = document.querySelectorAll('[data-size-option]');
 const quickBuySizeButtonsMobile = document.querySelectorAll('[data-size-option-mobile]');
+const openCartDrawerButton = document.getElementById('open-cart-drawer');
+const cartCountBadge = document.getElementById('cart-count-badge');
 const cartDrawer = document.getElementById('cart-drawer');
 const cartDrawerClose = document.getElementById('close-cart-drawer');
 const cartDrawerContinue = document.getElementById('continue-shopping');
+const cartEmptyExplore = document.getElementById('cart-empty-explore');
+const cartDrawerEmptyState = document.getElementById('cart-empty-state');
+const cartDrawerFilledState = document.getElementById('cart-filled-state');
 const cartDrawerImage = document.getElementById('cart-drawer-image');
 const cartDrawerName = document.getElementById('cart-drawer-name');
 const cartDrawerSize = document.getElementById('cart-drawer-size');
@@ -439,6 +444,7 @@ if (mobileMenuBtn && mobileMenu) {
 const cards = document.querySelectorAll('.tilt-card');
 let selectedQuickBuySize = 'S';
 let selectedQuickBuyCard = null;
+let cartItemSnapshot = null;
 let latestRecommendedSize = null;
 const ctaFeedbackPulseMs = 900;
 const quickBuyAutoHideMs = 15000;
@@ -451,6 +457,30 @@ const getProductDataFromCard = (card) => ({
     collection: card.getAttribute('data-product-collection') || 'Drop Collection',
     tech: card.getAttribute('data-product-tech') || 'Advanced Match Fabric'
 });
+
+const syncCartBadge = () => {
+    if (!cartCountBadge) {
+        return;
+    }
+
+    const count = cartItemSnapshot ? 1 : 0;
+    cartCountBadge.textContent = String(count);
+    cartCountBadge.classList.toggle('animate-pulse-glow', count > 0);
+};
+
+const addSelectedProductToCart = () => {
+    if (!selectedQuickBuyCard) {
+        return;
+    }
+
+    const data = getProductDataFromCard(selectedQuickBuyCard);
+    cartItemSnapshot = {
+        ...data,
+        size: selectedQuickBuySize
+    };
+
+    syncCartBadge();
+};
 
 const syncQuickBuySizeButtons = () => {
     quickBuySizeButtonsDesktop.forEach((button) => {
@@ -595,11 +625,18 @@ const openCartDrawer = () => {
         return;
     }
 
-    const activeData = selectedQuickBuyCard
-        ? getProductDataFromCard(selectedQuickBuyCard)
-        : null;
+    const activeData = cartItemSnapshot;
+    const hasCartItem = Boolean(activeData);
 
-    if (activeData) {
+    if (cartDrawerEmptyState) {
+        cartDrawerEmptyState.classList.toggle('hidden', hasCartItem);
+    }
+
+    if (cartDrawerFilledState) {
+        cartDrawerFilledState.classList.toggle('hidden', !hasCartItem);
+    }
+
+    if (hasCartItem) {
         if (cartDrawerImage && activeData.image) {
             cartDrawerImage.src = activeData.image;
             cartDrawerImage.alt = `${activeData.name} jersey`;
@@ -616,14 +653,18 @@ const openCartDrawer = () => {
         if (cartDrawerSubtotal) {
             cartDrawerSubtotal.textContent = activeData.price;
         }
-    }
 
-    if (cartDrawerSize) {
-        cartDrawerSize.textContent = `Size ${selectedQuickBuySize}`;
+        if (cartDrawerSize) {
+            cartDrawerSize.textContent = `Size ${activeData.size}`;
+        }
     }
 
     cartDrawer.classList.add('is-open');
     cartDrawer.setAttribute('aria-hidden', 'false');
+    document.body.style.overflow = 'hidden';
+    if (openCartDrawerButton) {
+        openCartDrawerButton.setAttribute('aria-expanded', 'true');
+    }
 };
 
 const closeCartDrawer = () => {
@@ -633,6 +674,10 @@ const closeCartDrawer = () => {
 
     cartDrawer.classList.remove('is-open');
     cartDrawer.setAttribute('aria-hidden', 'true');
+    document.body.style.overflow = '';
+    if (openCartDrawerButton) {
+        openCartDrawerButton.setAttribute('aria-expanded', 'false');
+    }
 };
 
 const triggerAddedToBagFeedback = (button, defaultLabel, onDone) => {
@@ -738,6 +783,8 @@ if (cards.length > 0) {
     setQuickBuySize(selectedQuickBuySize);
 }
 
+syncCartBadge();
+
 if (quickBuyCloseDesktop) {
     quickBuyCloseDesktop.addEventListener('click', () => {
         clearSelectedCard();
@@ -752,6 +799,7 @@ if (quickBuyCloseMobile) {
 
 if (quickBuyCtaDesktop) {
     quickBuyCtaDesktop.addEventListener('click', () => {
+        addSelectedProductToCart();
         triggerAddedToBagFeedback(
             quickBuyCtaDesktop,
             `ADD TO BAG - ${selectedQuickBuySize}`,
@@ -762,12 +810,17 @@ if (quickBuyCtaDesktop) {
 
 if (quickBuyCtaMobile) {
     quickBuyCtaMobile.addEventListener('click', () => {
+        addSelectedProductToCart();
         triggerAddedToBagFeedback(
             quickBuyCtaMobile,
             `QUICK BUY - ${selectedQuickBuySize}`,
             openCartDrawer
         );
     });
+}
+
+if (openCartDrawerButton) {
+    openCartDrawerButton.addEventListener('click', openCartDrawer);
 }
 
 if (cartDrawerClose) {
@@ -785,6 +838,16 @@ if (cartDrawer) {
         }
     });
 }
+
+if (cartEmptyExplore) {
+    cartEmptyExplore.addEventListener('click', closeCartDrawer);
+}
+
+window.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && cartDrawer?.classList.contains('is-open')) {
+        closeCartDrawer();
+    }
+});
 
 if (openFitFinderButton) {
     openFitFinderButton.addEventListener('click', openFitFinder);
