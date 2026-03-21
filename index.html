@@ -164,12 +164,20 @@
         }
 
         .featured-progress-dot {
+            display: inline-block;
             width: 7px;
             height: 7px;
             border-radius: 9999px;
             border: 1px solid rgba(255, 255, 255, 0.45);
             background: rgba(255, 255, 255, 0.22);
+            padding: 0;
+            cursor: pointer;
             transition: width 240ms ease, background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+        }
+
+        .featured-progress-dot:focus-visible {
+            outline: 2px solid #00f0ff;
+            outline-offset: 3px;
         }
 
         .featured-progress-dot.is-active {
@@ -177,6 +185,284 @@
             background: #00f0ff;
             border-color: #00f0ff;
             box-shadow: 0 0 12px rgba(0, 240, 255, 0.65);
+        }
+
+        .featured-hint {
+            margin-top: 0.52rem;
+            font-size: 0.64rem;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.62);
+        }
+
+        .trust-strip {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(0, 240, 255, 0.05), rgba(255, 255, 255, 0.03));
+        }
+
+        .trust-strip-item {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: rgba(255, 255, 255, 0.86);
+            font-size: 0.73rem;
+            letter-spacing: 0.08em;
+            font-weight: 600;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .trust-strip-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 9999px;
+            background: #00f0ff;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.7);
+        }
+
+        .drop-specs {
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+            transform: translateY(6px);
+            transition: max-height 280ms ease, opacity 220ms ease, transform 220ms ease;
+        }
+
+        .tilt-card:hover .drop-specs,
+        .tilt-card:focus-within .drop-specs,
+        .tilt-card.is-selected .drop-specs {
+            max-height: 140px;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .drop-spec-chip {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.32rem 0.58rem;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(255, 255, 255, 0.05);
+            font-size: 0.64rem;
+            letter-spacing: 0.08em;
+            color: rgba(255, 255, 255, 0.85);
+            text-transform: uppercase;
+        }
+
+        .tilt-card.is-selected {
+            border-color: rgba(0, 240, 255, 0.48);
+            box-shadow: 0 0 26px rgba(0, 240, 255, 0.22), 0 10px 40px rgba(0, 0, 0, 0.45);
+        }
+
+        .quick-buy-rail {
+            position: fixed;
+            right: 1.2rem;
+            bottom: 1.2rem;
+            width: min(340px, calc(100vw - 2.4rem));
+            border-radius: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(8, 8, 8, 0.72);
+            backdrop-filter: blur(16px);
+            box-shadow: 0 20px 80px rgba(0, 0, 0, 0.55), 0 0 36px rgba(0, 240, 255, 0.12);
+            z-index: 70;
+            overflow: hidden;
+        }
+
+        .quick-buy-rail::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.22);
+            z-index: 2;
+        }
+
+        .quick-buy-rail::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            transform: scaleX(0);
+            transform-origin: left;
+            background: #9ca3af;
+            z-index: 3;
+        }
+
+        .quick-buy-rail.is-countdown::after {
+            animation: quick-buy-countdown 15s linear forwards;
+        }
+
+        .quick-buy-size {
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            color: rgba(255, 255, 255, 0.86);
+            border-radius: 9999px;
+            padding: 0.42rem 0.72rem;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            transition: all 200ms ease;
+        }
+
+        .quick-buy-size.is-active {
+            border-color: #00f0ff;
+            color: #050505;
+            background: #00f0ff;
+            box-shadow: 0 0 16px rgba(0, 240, 255, 0.35);
+        }
+
+        .quick-buy-mobile {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 80;
+            border-top: 1px solid rgba(255, 255, 255, 0.16);
+            background: rgba(8, 8, 8, 0.92);
+            backdrop-filter: blur(16px);
+            padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+            overflow: hidden;
+        }
+
+        .quick-buy-mobile::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.22);
+            z-index: 2;
+        }
+
+        .quick-buy-mobile::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            transform: scaleX(0);
+            transform-origin: left;
+            background: #9ca3af;
+            z-index: 3;
+        }
+
+        .quick-buy-mobile.is-countdown::after {
+            animation: quick-buy-countdown 15s linear forwards;
+        }
+
+        .quick-buy-rail.is-closed,
+        .quick-buy-mobile.is-closed {
+            display: none !important;
+        }
+
+        .fit-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            display: grid;
+            place-items: center;
+            padding: 1rem;
+            background: rgba(5, 5, 5, 0.76);
+            backdrop-filter: blur(10px);
+        }
+
+        .fit-modal.is-hidden {
+            display: none;
+        }
+
+        .fit-panel {
+            width: min(560px, 100%);
+            border-radius: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.14);
+            background: rgba(10, 10, 10, 0.9);
+            box-shadow: 0 30px 100px rgba(0, 0, 0, 0.55), 0 0 24px rgba(0, 240, 255, 0.16);
+            padding: 1.2rem;
+        }
+
+        .fit-input {
+            width: 100%;
+            border-radius: 0.75rem;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            background: rgba(255, 255, 255, 0.04);
+            color: #ffffff;
+            padding: 0.72rem 0.85rem;
+        }
+
+        .fit-input:focus-visible {
+            outline: 2px solid #00f0ff;
+            outline-offset: 2px;
+        }
+
+        .cart-drawer {
+            position: fixed;
+            inset: 0;
+            z-index: 110;
+            background: rgba(4, 4, 4, 0.56);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 220ms ease;
+        }
+
+        .cart-drawer.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .cart-drawer-panel {
+            position: absolute;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            width: min(360px, 100%);
+            border-left: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(9, 9, 9, 0.94);
+            backdrop-filter: blur(16px);
+            transform: translateX(100%);
+            transition: transform 260ms cubic-bezier(0.16, 1, 0.3, 1);
+            box-shadow: -20px 0 80px rgba(0, 0, 0, 0.45);
+            padding: 1rem;
+            overflow: hidden;
+        }
+
+        .cart-drawer.is-open .cart-drawer-panel {
+            transform: translateX(0);
+        }
+
+        .cta-pulse-success {
+            animation: cta-pulse-success 620ms cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+
+        @keyframes quick-buy-countdown {
+            from {
+                transform: scaleX(0);
+            }
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        @keyframes cta-pulse-success {
+            0% {
+                transform: scale(1);
+                filter: brightness(1);
+            }
+            45% {
+                transform: scale(1.03);
+                filter: brightness(1.18);
+                box-shadow: 0 0 22px rgba(0, 240, 255, 0.35);
+            }
+            100% {
+                transform: scale(1);
+                filter: brightness(1);
+                box-shadow: none;
+            }
         }
 
         @keyframes featured-flip-out {
@@ -284,7 +570,7 @@
         ::-webkit-scrollbar-thumb:hover { background: #00f0ff; }
     </style>
 </head>
-<body class="antialiased selection:bg-brand-neon selection:text-black">
+<body class="antialiased selection:bg-brand-neon selection:text-black pb-28 md:pb-0">
 
     <!-- Custom Cursor -->
     <div class="cursor-dot" id="cursor-dot"></div>
@@ -377,13 +663,14 @@
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <p class="text-xs tracking-[0.2em] text-brand-neon uppercase">Featured Drop</p>
-                                <h3 class="font-display text-2xl font-bold text-white">AURA Signal Edition</h3>
+                                <h3 class="font-display text-2xl font-bold text-white" id="featured-drop-title">AURA Signal Edition</h3>
                                 <div class="featured-progress" id="featured-progress" aria-label="Featured drop progress" role="status">
-                                    <span class="featured-progress-dot is-active" data-featured-index="0" aria-hidden="true"></span>
-                                    <span class="featured-progress-dot" data-featured-index="1" aria-hidden="true"></span>
+                                    <button type="button" class="featured-progress-dot is-active interactive" data-featured-index="0" aria-label="Show featured drop 1"></button>
+                                    <button type="button" class="featured-progress-dot interactive" data-featured-index="1" aria-label="Show featured drop 2"></button>
                                 </div>
+                                <p class="featured-hint">Tap the dots to switch drops</p>
                             </div>
-                            <button class="glass-panel px-5 py-2 rounded-full text-xs tracking-wider hover:bg-brand-neon hover:text-black transition-colors">
+                            <button class="glass-panel px-6 py-2.5 rounded-full min-w-[120px] whitespace-nowrap text-xs tracking-wider hover:bg-brand-neon hover:text-black transition-colors inline-flex items-center justify-center">
                                 SHOP NOW
                             </button>
                         </div>
@@ -421,6 +708,15 @@
         </div>
     </div>
 
+    <div class="trust-strip">
+        <div class="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4">
+            <div class="trust-strip-item"><span class="trust-strip-dot"></span>Official Licensed Drops</div>
+            <div class="trust-strip-item"><span class="trust-strip-dot"></span>NFC Authenticated Jerseys</div>
+            <div class="trust-strip-item"><span class="trust-strip-dot"></span>24H Dispatch Worldwide</div>
+            <div class="trust-strip-item"><span class="trust-strip-dot"></span>Easy 14-Day Returns</div>
+        </div>
+    </div>
+
     <!-- Product Section -->
     <section id="drops" class="py-20 md:py-32 relative">
         <div class="max-w-7xl mx-auto px-4 md:px-6">
@@ -429,16 +725,21 @@
                     <h2 class="font-display font-extrabold text-4xl sm:text-5xl md:text-6xl text-white mb-2">LATEST <span class="text-transparent" style="-webkit-text-stroke: 1px #00f0ff;">DROPS</span></h2>
                     <p class="text-gray-400">Holographic weaves & adaptive temperature control.</p>
                 </div>
-                <button class="interactive glass-panel px-6 py-2 rounded-full text-sm font-semibold hover:bg-white hover:text-black transition-colors flex items-center gap-2">
-                    VIEW ALL <i class="ph-bold ph-arrow-up-right"></i>
-                </button>
+                <div class="flex flex-wrap items-center gap-3">
+                    <button id="open-fit-finder" class="interactive glass-panel px-6 py-2 rounded-full text-sm font-semibold hover:bg-brand-neon hover:text-black transition-colors flex items-center gap-2">
+                        FIND MY FIT <i class="ph ph-ruler"></i>
+                    </button>
+                    <button class="interactive glass-panel px-6 py-2 rounded-full text-sm font-semibold hover:bg-white hover:text-black transition-colors flex items-center gap-2">
+                        VIEW ALL <i class="ph-bold ph-arrow-up-right"></i>
+                    </button>
+                </div>
             </div>
 
             <!-- Grid -->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 perspective-1000">
                 
                 <!-- Product Card 1 -->
-                <div class="tilt-card interactive group rounded-3xl p-4 glass-panel cursor-none relative overflow-hidden">
+                <div class="tilt-card interactive group rounded-3xl p-4 glass-panel cursor-none relative overflow-hidden" data-product-name="Argentina Home" data-product-price="$145" data-product-image="images/ArgentinaHomeKit.png" data-product-collection="World Cup Collection" data-product-tech="Aeroweave Vent Mesh" data-product-fit="Slim Fit">
                     <div class="absolute inset-0 bg-gradient-to-br from-brand-neon/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
                     
                     <div class="tilt-content relative">
@@ -462,16 +763,21 @@
                                 <span class="font-mono text-brand-neon font-bold">$145</span>
                             </div>
                             <p class="text-gray-400 text-sm mb-6">World Cup Collection - Home Kit</p>
+                            <div class="drop-specs mb-5 flex flex-wrap gap-2">
+                                <span class="drop-spec-chip">Slim Fit</span>
+                                <span class="drop-spec-chip">Aeroweave Vent Mesh</span>
+                                <span class="drop-spec-chip">NFC Auth</span>
+                            </div>
                             
-                            <button class="w-full glass-panel border border-white/20 py-3 rounded-xl font-semibold hover:bg-brand-neon hover:text-black hover:border-brand-neon transition-all duration-300">
-                                ADD TO CART
+                            <button class="w-full glass-panel border border-white/20 py-3 rounded-xl font-semibold hover:bg-brand-neon hover:text-black hover:border-brand-neon transition-all duration-300 js-quick-buy">
+                                QUICK BUY
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Product Card 2 -->
-                <div class="tilt-card interactive group rounded-3xl p-4 glass-panel cursor-none relative overflow-hidden">
+                <div class="tilt-card interactive group rounded-3xl p-4 glass-panel cursor-none relative overflow-hidden" data-product-name="Belgium Home" data-product-price="$160" data-product-image="images/BelgiumHomeKit.png" data-product-collection="World Cup Collection" data-product-tech="PulseFlex Smart Thread" data-product-fit="Regular Fit">
                     <div class="absolute inset-0 bg-gradient-to-br from-brand-purple/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
                     
                     <div class="tilt-content relative">
@@ -492,16 +798,21 @@
                                 <span class="font-mono text-brand-neon font-bold">$160</span>
                             </div>
                             <p class="text-gray-400 text-sm mb-6">World Cup Collection - Home Kit</p>
+                            <div class="drop-specs mb-5 flex flex-wrap gap-2">
+                                <span class="drop-spec-chip">Regular Fit</span>
+                                <span class="drop-spec-chip">PulseFlex Smart Thread</span>
+                                <span class="drop-spec-chip">Limited Drop</span>
+                            </div>
                             
-                            <button class="w-full glass-panel border border-white/20 py-3 rounded-xl font-semibold hover:bg-brand-neon hover:text-black hover:border-brand-neon transition-all duration-300">
-                                ADD TO CART
+                            <button class="w-full glass-panel border border-white/20 py-3 rounded-xl font-semibold hover:bg-brand-neon hover:text-black hover:border-brand-neon transition-all duration-300 js-quick-buy">
+                                QUICK BUY
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- Product Card 3 -->
-                <div class="tilt-card interactive group rounded-3xl p-4 glass-panel cursor-none relative overflow-hidden">
+                <div class="tilt-card interactive group rounded-3xl p-4 glass-panel cursor-none relative overflow-hidden" data-product-name="Spain Home" data-product-price="$135" data-product-image="images/SpainHomeKit.png" data-product-collection="World Cup Collection" data-product-tech="CryoLite Fabric" data-product-fit="Athletic Fit">
                     <div class="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 rounded-3xl"></div>
                     
                     <div class="tilt-content relative">
@@ -519,9 +830,14 @@
                                 <span class="font-mono text-brand-neon font-bold">$135</span>
                             </div>
                             <p class="text-gray-400 text-sm mb-6">World Cup Collection - Home Kit</p>
+                            <div class="drop-specs mb-5 flex flex-wrap gap-2">
+                                <span class="drop-spec-chip">Athletic Fit</span>
+                                <span class="drop-spec-chip">CryoLite Fabric</span>
+                                <span class="drop-spec-chip">Thermo Adaptive</span>
+                            </div>
                             
-                            <button class="w-full glass-panel border border-white/20 py-3 rounded-xl font-semibold hover:bg-brand-neon hover:text-black hover:border-brand-neon transition-all duration-300">
-                                ADD TO CART
+                            <button class="w-full glass-panel border border-white/20 py-3 rounded-xl font-semibold hover:bg-brand-neon hover:text-black hover:border-brand-neon transition-all duration-300 js-quick-buy">
+                                QUICK BUY
                             </button>
                         </div>
                     </div>
@@ -530,6 +846,134 @@
             </div>
         </div>
     </section>
+
+    <aside class="quick-buy-rail hidden lg:block" aria-label="Quick buy panel">
+        <div class="p-4 md:p-5">
+            <div class="flex items-center justify-between mb-2">
+                <p class="text-[11px] tracking-[0.18em] uppercase text-brand-neon font-semibold">Quick Buy</p>
+                <button type="button" id="quick-buy-close-desktop" class="interactive text-gray-400 hover:text-white text-xs tracking-widest uppercase">Close</button>
+            </div>
+            <div class="flex items-center gap-3 mb-4">
+                <img id="quick-buy-image" src="images/ArgentinaHomeKit.png" alt="Selected quick buy jersey" class="w-16 h-16 rounded-xl object-cover object-center border border-white/15">
+                <div>
+                    <p id="quick-buy-name" class="font-display text-lg text-white font-bold leading-tight">Argentina Home</p>
+                    <p id="quick-buy-collection" class="text-xs tracking-wide text-gray-400">World Cup Collection</p>
+                    <p id="quick-buy-price" class="font-mono text-brand-neon text-sm font-semibold mt-1">$145</p>
+                </div>
+            </div>
+
+            <p class="text-[11px] tracking-[0.16em] uppercase text-gray-400 mb-2">Select Size</p>
+            <div id="quick-buy-sizes-desktop" class="flex flex-wrap gap-2 mb-4">
+                <button type="button" class="quick-buy-size is-active interactive" data-size-option="S">S</button>
+                <button type="button" class="quick-buy-size interactive" data-size-option="M">M</button>
+                <button type="button" class="quick-buy-size interactive" data-size-option="L">L</button>
+                <button type="button" class="quick-buy-size interactive" data-size-option="XL">XL</button>
+            </div>
+
+            <p id="quick-buy-tech" class="text-xs text-gray-400 mb-4">Tech: Aeroweave Vent Mesh</p>
+
+            <button type="button" id="quick-buy-cta-desktop" class="w-full bg-brand-neon text-black font-semibold py-3 rounded-xl hover:brightness-105 transition-all interactive">
+                <span id="quick-buy-cta-desktop-label">ADD TO BAG - M</span>
+            </button>
+        </div>
+    </aside>
+
+    <div class="quick-buy-mobile lg:hidden" aria-label="Mobile quick buy">
+        <div class="px-4 pt-3">
+            <div class="flex items-center justify-between gap-3 mb-3">
+                <div class="min-w-0">
+                    <p id="quick-buy-mobile-name" class="font-display text-base text-white font-bold truncate">Argentina Home</p>
+                    <p id="quick-buy-mobile-price" class="font-mono text-brand-neon text-sm">$145</p>
+                </div>
+                <button type="button" id="quick-buy-close-mobile" class="interactive text-gray-400 hover:text-white text-xs tracking-widest uppercase">Close</button>
+            </div>
+            <div class="flex items-center justify-between gap-3 mb-3">
+                <div id="quick-buy-sizes-mobile" class="flex items-center gap-1.5">
+                    <button type="button" class="quick-buy-size is-active interactive" data-size-option-mobile="S">S</button>
+                    <button type="button" class="quick-buy-size interactive" data-size-option-mobile="M">M</button>
+                    <button type="button" class="quick-buy-size interactive" data-size-option-mobile="L">L</button>
+                    <button type="button" class="quick-buy-size interactive" data-size-option-mobile="XL">XL</button>
+                </div>
+            </div>
+            <button type="button" id="quick-buy-cta-mobile" class="w-full bg-brand-neon text-black font-semibold py-3 rounded-xl hover:brightness-105 transition-all interactive mb-1">
+                <span id="quick-buy-cta-mobile-label">QUICK BUY - S</span>
+            </button>
+        </div>
+    </div>
+
+    <div id="cart-drawer" class="cart-drawer" aria-hidden="true">
+        <div class="cart-drawer-panel">
+            <div class="flex items-center justify-between mb-4">
+                <p class="font-display text-2xl text-white font-bold">Your Bag</p>
+                <button type="button" id="close-cart-drawer" class="interactive text-gray-400 hover:text-white text-xs tracking-widest uppercase">Close</button>
+            </div>
+
+            <div class="rounded-xl border border-white/15 bg-white/5 p-3 mb-4">
+                <div class="flex items-center gap-3">
+                    <img id="cart-drawer-image" src="images/ArgentinaHomeKit.png" alt="Added jersey" class="w-16 h-16 rounded-lg object-cover object-center border border-white/15">
+                    <div class="min-w-0">
+                        <p id="cart-drawer-name" class="font-display text-lg text-white font-bold truncate">Argentina Home</p>
+                        <p id="cart-drawer-size" class="text-xs uppercase tracking-wider text-gray-400 mt-0.5">Size S</p>
+                        <p id="cart-drawer-price" class="font-mono text-sm text-brand-neon mt-1">$145</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between text-sm text-gray-300 mb-2">
+                <span>Subtotal</span>
+                <span id="cart-drawer-subtotal" class="font-mono text-white">$145</span>
+            </div>
+            <div class="flex items-center justify-between text-xs uppercase tracking-widest text-gray-500 mb-5">
+                <span>Estimated Delivery</span>
+                <span>2-4 Days</span>
+            </div>
+
+            <button type="button" class="w-full bg-brand-neon text-black font-semibold py-3 rounded-xl hover:brightness-105 transition-all interactive mb-2">Checkout</button>
+            <button type="button" id="continue-shopping" class="w-full glass-panel border border-white/20 py-3 rounded-xl font-semibold hover:border-brand-neon transition-all interactive">Continue Shopping</button>
+        </div>
+    </div>
+
+    <div id="fit-finder-modal" class="fit-modal is-hidden" aria-hidden="true" role="dialog" aria-label="Find my fit">
+        <div class="fit-panel">
+            <div class="flex items-center justify-between gap-3 mb-4">
+                <div>
+                    <p class="text-[11px] tracking-[0.18em] uppercase text-brand-neon font-semibold">Fit Finder</p>
+                    <h3 class="font-display text-2xl font-bold text-white">Get Your Perfect Jersey Size</h3>
+                </div>
+                <button type="button" id="close-fit-finder" class="interactive text-gray-400 hover:text-white text-xs tracking-widest uppercase">Close</button>
+            </div>
+
+            <form id="fit-finder-form" class="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                <label class="text-sm text-gray-300">
+                    Height (cm)
+                    <input required min="130" max="230" type="number" name="height" class="fit-input mt-1.5" placeholder="175">
+                </label>
+                <label class="text-sm text-gray-300">
+                    Weight (kg)
+                    <input required min="35" max="200" type="number" name="weight" class="fit-input mt-1.5" placeholder="72">
+                </label>
+                <label class="text-sm text-gray-300 md:col-span-2">
+                    Preferred Fit
+                    <select name="fitPreference" class="fit-input mt-1.5">
+                        <option value="regular">Regular</option>
+                        <option value="slim">Slim</option>
+                        <option value="oversized">Oversized</option>
+                    </select>
+                </label>
+
+                <div id="fit-finder-result" class="md:col-span-2 hidden rounded-xl border border-white/15 bg-white/5 p-3">
+                    <p class="text-xs uppercase tracking-widest text-gray-400 mb-1">Recommended Size</p>
+                    <p id="fit-finder-size" class="font-display text-3xl text-brand-neon font-bold">M</p>
+                    <p id="fit-finder-confidence" class="text-sm text-gray-300 mt-1">Confidence: High</p>
+                </div>
+
+                <div class="md:col-span-2 flex flex-wrap items-center gap-3">
+                    <button type="submit" class="interactive bg-brand-neon text-black font-semibold px-5 py-2.5 rounded-xl">Recommend Size</button>
+                    <button type="button" id="apply-fit-size" class="interactive glass-panel px-5 py-2.5 rounded-xl border border-white/20">Apply To Quick Buy</button>
+                </div>
+            </form>
+        </div>
+    </div>
 
     <!-- Footer -->
     <footer class="border-t border-white/10 bg-black pt-20 pb-10">
