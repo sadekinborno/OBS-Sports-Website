@@ -65,6 +65,7 @@ if (featuredDropImage) {
     let pauseAutoRotateUntilMs = 0;
     let featuredFlipInProgress = false;
     let featuredGlowAnimation = null;
+    const featuredAssetReadyPromises = new Map();
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const holdMaxTiltDeg = 9;
 
@@ -73,6 +74,48 @@ if (featuredDropImage) {
 
     const pauseAutoRotate = () => {
         pauseAutoRotateUntilMs = Date.now() + manualAutoRotatePauseMs;
+    };
+
+    const waitForNextFrame = () => new Promise((resolve) => {
+        window.requestAnimationFrame(() => resolve());
+    });
+
+    const ensureFeaturedAssetReady = (index) => {
+        const image = featuredImageOptions[index];
+        if (!image || !image.src) {
+            return Promise.resolve();
+        }
+
+        const existingPromise = featuredAssetReadyPromises.get(image.src);
+        if (existingPromise) {
+            return existingPromise;
+        }
+
+        const preloadPromise = new Promise((resolve) => {
+            const preloadImage = new Image();
+
+            const complete = () => {
+                if (typeof preloadImage.decode === 'function') {
+                    preloadImage.decode().catch(() => {
+                        // Ignore decode failures and proceed with loaded asset.
+                    }).finally(resolve);
+                    return;
+                }
+
+                resolve();
+            };
+
+            preloadImage.onload = complete;
+            preloadImage.onerror = () => resolve();
+            preloadImage.src = image.src;
+
+            if (preloadImage.complete) {
+                complete();
+            }
+        });
+
+        featuredAssetReadyPromises.set(image.src, preloadPromise);
+        return preloadPromise;
     };
 
     const setFeaturedImage = (index) => {
@@ -92,37 +135,37 @@ if (featuredDropImage) {
         });
     };
 
-    const runFlipOut = () => featuredDropImage.animate([
+    const runFlipOut = (motionSign) => featuredDropImage.animate([
         {
             transform: 'perspective(1500px) translateX(0px) rotateY(0deg) rotateZ(0deg) scale(1)',
             opacity: 1,
             filter: 'saturate(1) blur(0px)'
         },
         {
-            transform: 'perspective(1500px) translateX(12px) rotateY(52deg) rotateZ(0.4deg) scale(0.985)',
-            opacity: 0.35,
-            filter: 'saturate(1.1) blur(0.8px)'
+            transform: `perspective(1500px) translateX(${10 * motionSign}px) rotateY(${46 * motionSign}deg) rotateZ(${0.25 * motionSign}deg) scale(0.988)`,
+            opacity: 0.42,
+            filter: 'saturate(1.08) blur(0.7px)'
         },
         {
-            transform: 'perspective(1500px) translateX(22px) rotateY(92deg) rotateZ(0.8deg) scale(0.95)',
-            opacity: 0.06,
-            filter: 'saturate(1.2) blur(2.8px)'
+            transform: `perspective(1500px) translateX(${18 * motionSign}px) rotateY(${82 * motionSign}deg) rotateZ(${0.45 * motionSign}deg) scale(0.958)`,
+            opacity: 0.1,
+            filter: 'saturate(1.16) blur(2.3px)'
         }
     ], {
-        duration: featuredFlipOutDurationMs,
-        easing: 'cubic-bezier(0.4, 0, 0.25, 1)',
+        duration: featuredFlipOutDurationMs + 40,
+        easing: 'cubic-bezier(0.33, 0, 0.2, 1)',
         fill: 'forwards'
     }).finished;
 
-    const runFlipIn = () => featuredDropImage.animate([
+    const runFlipIn = (motionSign) => featuredDropImage.animate([
         {
-            transform: 'perspective(1500px) translateX(-22px) rotateY(-92deg) rotateZ(-0.8deg) scale(0.95)',
-            opacity: 0.06,
-            filter: 'saturate(1.2) blur(2.8px)'
+            transform: `perspective(1500px) translateX(${-18 * motionSign}px) rotateY(${-82 * motionSign}deg) rotateZ(${-0.45 * motionSign}deg) scale(0.958)`,
+            opacity: 0.1,
+            filter: 'saturate(1.16) blur(2.3px)'
         },
         {
-            transform: 'perspective(1500px) translateX(5px) rotateY(14deg) rotateZ(0.15deg) scale(1.012)',
-            opacity: 0.88,
+            transform: `perspective(1500px) translateX(${4 * motionSign}px) rotateY(${12 * motionSign}deg) rotateZ(${0.12 * motionSign}deg) scale(1)`,
+            opacity: 0.9,
             filter: 'saturate(1.04) blur(0.2px)'
         },
         {
@@ -131,8 +174,8 @@ if (featuredDropImage) {
             filter: 'saturate(1) blur(0px)'
         }
     ], {
-        duration: featuredFlipInDurationMs,
-        easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+        duration: featuredFlipInDurationMs + 30,
+        easing: 'cubic-bezier(0.2, 0.9, 0.2, 1)',
         fill: 'forwards'
     }).finished;
 
@@ -232,20 +275,25 @@ if (featuredDropImage) {
         featuredFlipInProgress = true;
         try {
             const direction = offset >= 0 ? 1 : -1;
+            const motionSign = direction;
+            const nextFeaturedIndex = normalizeFeaturedIndex(currentFeaturedIndex + direction);
+
+            await ensureFeaturedAssetReady(nextFeaturedIndex);
 
             if (prefersReducedMotion) {
-                currentFeaturedIndex = normalizeFeaturedIndex(currentFeaturedIndex + direction);
+                currentFeaturedIndex = nextFeaturedIndex;
                 setFeaturedImage(currentFeaturedIndex);
                 return;
             }
 
             runGlowPulse();
-            await runFlipOut();
-            currentFeaturedIndex = normalizeFeaturedIndex(currentFeaturedIndex + direction);
+            await runFlipOut(motionSign);
+            currentFeaturedIndex = nextFeaturedIndex;
             setFeaturedImage(currentFeaturedIndex);
+            await waitForNextFrame();
             runChromaticFlash();
 
-            await runFlipIn();
+            await runFlipIn(motionSign);
         } finally {
             featuredFlipInProgress = false;
         }
@@ -294,10 +342,9 @@ if (featuredDropImage) {
         setFeatureShellRestState();
     };
 
-    // Preload featured images so the flip transition stays smooth.
-    featuredImageOptions.forEach((item) => {
-        const preloaded = new Image();
-        preloaded.src = item.src;
+    // Preload and decode featured images so swap direction remains equally smooth.
+    featuredImageOptions.forEach((_, index) => {
+        void ensureFeaturedAssetReady(index);
     });
 
     setFeaturedImage(currentFeaturedIndex);
