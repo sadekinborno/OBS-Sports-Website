@@ -142,6 +142,69 @@
             object-position: center;
         }
 
+        #featured-drop-image {
+            backface-visibility: hidden;
+            transform-origin: center;
+            will-change: transform, opacity, filter;
+        }
+
+        #featured-drop-image.featured-flip-out {
+            animation: featured-flip-out 420ms cubic-bezier(0.35, 0, 0.2, 1) both;
+        }
+
+        #featured-drop-image.featured-flip-in {
+            animation: featured-flip-in 560ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+        }
+
+        .featured-progress {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            margin-top: 0.65rem;
+        }
+
+        .featured-progress-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 9999px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            background: rgba(255, 255, 255, 0.22);
+            transition: width 240ms ease, background-color 240ms ease, border-color 240ms ease, box-shadow 240ms ease;
+        }
+
+        .featured-progress-dot.is-active {
+            width: 19px;
+            background: #00f0ff;
+            border-color: #00f0ff;
+            box-shadow: 0 0 12px rgba(0, 240, 255, 0.65);
+        }
+
+        @keyframes featured-flip-out {
+            from {
+                transform: perspective(1200px) rotateY(0deg) scale(1);
+                opacity: 1;
+                filter: saturate(1) blur(0px);
+            }
+            to {
+                transform: perspective(1200px) rotateY(88deg) scale(0.96);
+                opacity: 0.1;
+                filter: saturate(1.25) blur(4px);
+            }
+        }
+
+        @keyframes featured-flip-in {
+            from {
+                transform: perspective(1200px) rotateY(-88deg) scale(0.96);
+                opacity: 0.1;
+                filter: saturate(1.25) blur(4px);
+            }
+            to {
+                transform: perspective(1200px) rotateY(0deg) scale(1);
+                opacity: 1;
+                filter: saturate(1) blur(0px);
+            }
+        }
+
         @media (max-width: 1024px) {
             .hero-bg {
                 background-attachment: scroll;
@@ -308,13 +371,17 @@
 
             <!-- Hero Feature Image -->
             <div class="hidden lg:flex justify-end relative animate-float interactive cursor-none">
-                <div class="hero-image-shell w-full max-w-md aspect-[4/5]">
+                <div class="hero-image-shell w-full max-w-sm aspect-[4/5]">
                     <img id="featured-drop-image" src="images/Lamine.webp" alt="Lamine featured jersey" loading="eager">
                     <div class="absolute inset-x-0 bottom-0 p-6 bg-gradient-to-t from-black/80 via-black/35 to-transparent">
                         <div class="flex items-center justify-between gap-4">
                             <div>
                                 <p class="text-xs tracking-[0.2em] text-brand-neon uppercase">Featured Drop</p>
                                 <h3 class="font-display text-2xl font-bold text-white">AURA Signal Edition</h3>
+                                <div class="featured-progress" id="featured-progress" aria-label="Featured drop progress" role="status">
+                                    <span class="featured-progress-dot is-active" data-featured-index="0" aria-hidden="true"></span>
+                                    <span class="featured-progress-dot" data-featured-index="1" aria-hidden="true"></span>
+                                </div>
                             </div>
                             <button class="glass-panel px-5 py-2 rounded-full text-xs tracking-wider hover:bg-brand-neon hover:text-black transition-colors">
                                 SHOP NOW
@@ -508,151 +575,6 @@
     </footer>
 
     <!-- Scripts for 2026 Interactions -->
-    <script>
-        // Custom Cursor Logic
-        const cursorDot = document.getElementById('cursor-dot');
-        const cursorOutline = document.getElementById('cursor-outline');
-        const interactives = document.querySelectorAll('.interactive');
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuLinks = document.querySelectorAll('.mobile-menu-link');
-        const featuredDropImage = document.getElementById('featured-drop-image');
-
-        if (featuredDropImage) {
-            const featuredImageOptions = [
-                { src: 'images/Lamine.webp', alt: 'Lamine featured jersey' },
-                { src: 'images/Gnabry.png', alt: 'Gnabry featured jersey' }
-            ];
-
-            const featuredImageStorageKey = 'featured-drop-last-index';
-            const savedFeaturedIndex = Number(sessionStorage.getItem(featuredImageStorageKey));
-            const hasSavedIndex = Number.isInteger(savedFeaturedIndex)
-                && savedFeaturedIndex >= 0
-                && savedFeaturedIndex < featuredImageOptions.length;
-
-            // Start random on first load, then rotate to avoid repeated picks across reloads.
-            const nextFeaturedIndex = hasSavedIndex
-                ? (savedFeaturedIndex + 1) % featuredImageOptions.length
-                : Math.floor(Math.random() * featuredImageOptions.length);
-            const nextFeaturedImage = featuredImageOptions[nextFeaturedIndex];
-
-            featuredDropImage.src = nextFeaturedImage.src;
-            featuredDropImage.alt = nextFeaturedImage.alt;
-            sessionStorage.setItem(featuredImageStorageKey, String(nextFeaturedIndex));
-
-            featuredDropImage.onerror = () => {
-                const fallbackIndex = (nextFeaturedIndex + 1) % featuredImageOptions.length;
-                const fallbackImage = featuredImageOptions[fallbackIndex];
-                featuredDropImage.src = fallbackImage.src;
-                featuredDropImage.alt = fallbackImage.alt;
-                sessionStorage.setItem(featuredImageStorageKey, String(fallbackIndex));
-            };
-        }
-
-        window.addEventListener('mousemove', (e) => {
-            const posX = e.clientX;
-            const posY = e.clientY;
-
-            cursorDot.style.left = `${posX}px`;
-            cursorDot.style.top = `${posY}px`;
-            
-            // Add a slight delay to the outline for a smooth trailing effect
-            cursorOutline.animate({
-                left: `${posX}px`,
-                top: `${posY}px`
-            }, { duration: 500, fill: "forwards" });
-        });
-
-        interactives.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                document.body.classList.add('hovering');
-            });
-            el.addEventListener('mouseleave', () => {
-                document.body.classList.remove('hovering');
-            });
-        });
-
-        // Mobile menu toggle and auto-close behavior.
-        if (mobileMenuBtn && mobileMenu) {
-            mobileMenuBtn.addEventListener('click', () => {
-                const isOpen = !mobileMenu.classList.contains('hidden');
-                mobileMenu.classList.toggle('hidden');
-                mobileMenuBtn.setAttribute('aria-expanded', String(!isOpen));
-            });
-
-            mobileMenuLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    mobileMenu.classList.add('hidden');
-                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
-                });
-            });
-
-            window.addEventListener('resize', () => {
-                if (window.innerWidth >= 768) {
-                    mobileMenu.classList.add('hidden');
-                    mobileMenuBtn.setAttribute('aria-expanded', 'false');
-                }
-            });
-        }
-
-        // 3D Magnetic Tilt Effect for Product Cards
-        const cards = document.querySelectorAll('.tilt-card');
-        
-        cards.forEach(card => {
-            card.addEventListener('mousemove', e => {
-                const rect = card.getBoundingClientRect();
-                const x = e.clientX - rect.left; // x position within the element
-                const y = e.clientY - rect.top;  // y position within the element
-                
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                
-                // Calculate rotation (max 15 degrees)
-                const rotateX = ((y - centerY) / centerY) * -15; 
-                const rotateY = ((x - centerX) / centerX) * 15;
-                
-                card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
-            });
-            
-            card.addEventListener('mouseleave', () => {
-                // Reset card to default state
-                card.style.transform = `perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)`;
-            });
-        });
-
-        // Navbar blur and hide/show based on scroll direction.
-        const navbar = document.getElementById('navbar');
-        let lastToggleScrollY = window.scrollY;
-        const navbarToggleThreshold = 10;
-        window.addEventListener('scroll', () => {
-            const currentScrollY = window.scrollY;
-
-            if (currentScrollY > 50) {
-                navbar.classList.add('bg-black/40', 'backdrop-blur-xl');
-                navbar.classList.remove('border-transparent');
-            } else {
-                navbar.classList.remove('bg-black/40', 'backdrop-blur-xl');
-                navbar.classList.add('border-transparent');
-            }
-
-            const scrollDelta = currentScrollY - lastToggleScrollY;
-            if (Math.abs(scrollDelta) < navbarToggleThreshold) {
-                return;
-            }
-
-            const isScrollingDown = scrollDelta > 0;
-            const passedTopArea = currentScrollY > 120;
-
-            if (isScrollingDown && passedTopArea) {
-                navbar.classList.add('-translate-y-full');
-            } else {
-                navbar.classList.remove('-translate-y-full');
-            }
-
-            lastToggleScrollY = currentScrollY;
-        });
-
-        // Reserved for future hero widget interactions.
-    </script>
+    <script src="js/main.js" defer></script>
 </body>
 </html>
