@@ -904,6 +904,9 @@ if (applyFitSizeButton) {
 // 3D Magnetic Tilt Effect for Product Cards
 
 cards.forEach((card) => {
+    const tiltImageAnchor = card.querySelector('.tilt-image-anchor');
+    const inverseTiltFactor = 1;
+
     card.addEventListener('click', () => {
         setQuickBuyProduct(card);
     });
@@ -921,11 +924,21 @@ cards.forEach((card) => {
         const rotateY = ((x - centerX) / centerX) * 15;
 
         card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale3d(1.02, 1.02, 1.02)`;
+
+        if (tiltImageAnchor) {
+            const imageRotateX = -rotateX * inverseTiltFactor;
+            const imageRotateY = -rotateY * inverseTiltFactor;
+            tiltImageAnchor.style.transform = `rotateX(${imageRotateX}deg) rotateY(${imageRotateY}deg)`;
+        }
     });
 
     card.addEventListener('mouseleave', () => {
         // Reset card to default state
         card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+
+        if (tiltImageAnchor) {
+            tiltImageAnchor.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        }
     });
 });
 

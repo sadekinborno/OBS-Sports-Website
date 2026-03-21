@@ -504,6 +504,15 @@ body.hovering .cursor-outline {
     transform: translateZ(50px); /* Pushes content forward in 3D space */
 }
 
+.tilt-image-anchor {
+    width: 100%;
+    height: 100%;
+    will-change: transform;
+    transform-origin: center center;
+    transform: rotateX(0deg) rotateY(0deg);
+    transition: transform 120ms ease-out;
+}
+
 /* Hide scrollbar but keep functionality */
 ::-webkit-scrollbar { width: 8px; }
 ::-webkit-scrollbar-track { background: #050505; }
